@@ -1,6 +1,6 @@
 import sys
 import pygame
-from time import *
+import time
 
 class Game:
     def __init__(self):
@@ -75,6 +75,9 @@ class Game:
         jump_counter = 2
         gear_id = 1
         glove_id = 1
+        rush = 0
+        rush_count = 0
+        FPS = 60
 
         while True:
             for event in pygame.event.get():
@@ -85,22 +88,24 @@ class Game:
                 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT:
-                        char_velocity_x = 5  
+                        char_velocity_x = 5 + rush
                         self.direction = 'right'
                     if event.key == pygame.K_LEFT:
-                        char_velocity_x = -5 
+                        char_velocity_x = -5 - rush
                         self.direction = 'left' 
                     if event.key == pygame.K_SPACE and (jump_counter > 0):  
                         char_velocity_y = jump_power
                         jump_counter -= 1
-                    if event == pygame.K_r:
+                    if event.key == pygame.K_r:
                         gear_id += 1
                         if gear_id > 2:
                             gear_id = 1
-                    if event == pygame.K_t:
+                        print(gear_id)
+                    if event.key == pygame.K_t:
                         glove_id += 1
                         if glove_id > 2:
-                            gear_id == 1
+                            glove_id = 1
+                        print(glove_id)
                     if event.key == pygame.K_e and self.dash and gear_id == 1:
                         if self.direction =='right':
                             char_velocity_x = dash_speed
@@ -109,6 +114,15 @@ class Game:
                         char_velocity_y = dash_up_boost
                         dash_timer = dash_duration
                         self.dash = False
+                    if event.key == pygame.K_e and gear_id == 2 and rush_count == 0:
+                        rush = 5
+                        rush_count = 100
+                        FPS *= 2
+                        while rush_count != 0:
+                            time.sleep(0.5)
+                            rush_count -=1
+
+
 
                 if event.type == pygame.KEYUP:
                     if event.key in [pygame.K_RIGHT, pygame.K_LEFT]:
@@ -138,9 +152,10 @@ class Game:
             for k, v in self.all_rect.items():
                 char_y, char_velocity_y, a = self.check_collision(char_x, char_y, char_velocity_y, v[0], v[1], v[2], v[3])
                 on_floor = on_floor or a
-                
+
+                    
                 if self.dash != True:
-                    if glove_id == 1:
+                    if glove_id != 1:
                         pass
                     else:
                         self.dash = on_floor
@@ -150,7 +165,7 @@ class Game:
                 jump_counter = 1
 
 
-            char_x = max(200, min(char_x, 650))  
+            char_x = max(400, 400)  
 
             self.screen.blit(self.background_image, (0, 0))
             for k,v in self.all_rect.items():
@@ -163,7 +178,7 @@ class Game:
             self.screen.blit(self.jumpx2_symbol, (char_x-15, char_y+20))
             self.screen.blit(self.dash_symbol, (char_x+27.5, char_y+20))            
             pygame.display.update()
-            self.clock.tick(60)
+            self.clock.tick(FPS)
 
 
     def tutorial_screen(self):

@@ -38,7 +38,10 @@ class Game:
         self.character_image = pygame.image.load("Character.png")
 
         self.character_image = pygame.transform.scale(self.character_image, (25, 50))
+        self.fcharge_image = pygame.image.load("5_rcharge.png")
 
+        self.r_recharge = pygame.image.load("rush_recharge.png")
+        self.r_recharge = pygame.transform.scale(self.r_recharge, (200, 200))  
         
         self.floor_image = pygame.image.load("Floor.png")
         self.floor_image = pygame.transform.scale(self.floor_image, (200, 50))  
@@ -76,9 +79,10 @@ class Game:
         gear_id = 1
         glove_id = 1
         rush = 0
-        rush_count = 0
+        rush_count = 5
         FPS = 60
-
+        rushed = False
+        rushing = False
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -100,7 +104,10 @@ class Game:
                         gear_id += 1
                         if gear_id > 2:
                             gear_id = 1
-                        print(gear_id)
+                        if gear_id == 2:
+                            rushed = True
+                        else:
+                            rushed = False
                     if event.key == pygame.K_t:
                         glove_id += 1
                         if glove_id > 2:
@@ -114,13 +121,16 @@ class Game:
                         char_velocity_y = dash_up_boost
                         dash_timer = dash_duration
                         self.dash = False
-                    if event.key == pygame.K_e and gear_id == 2 and rush_count == 0:
-                        rush = 5
-                        rush_count = 100
-                        FPS *= 2
-                        while rush_count != 0:
-                            time.sleep(0.5)
-                            rush_count -=1
+                    if event.key == pygame.K_e and gear_id == 2 and rush_count > 0 and rushing == False:
+                        rush = 6.5
+                        rush_count -= 1
+                        rushing = True
+                        print(rush_count)
+                        
+                    elif gear_id != 2 or rush_count == 0:
+                        rush = 0
+                        rushing = False
+                        
 
 
 
@@ -176,7 +186,25 @@ class Game:
             self.screen.blit(self.left, (char_x-15, char_y+20))
             self.screen.blit(self.right, (char_x+27.5, char_y+20))
             self.screen.blit(self.jumpx2_symbol, (char_x-15, char_y+20))
-            self.screen.blit(self.dash_symbol, (char_x+27.5, char_y+20))            
+            self.screen.blit(self.dash_symbol, (char_x+27.5, char_y+20))     
+            if rushed == True:
+                if rush_count == 5:
+                    self.fcharge_image = pygame.image.load("5_rcharge.png")
+                elif rush_count == 4:
+                    self.fcharge_image = pygame.image.load("4_rcharge.png")
+                elif rush_count == 3:
+                    self.fcharge_image = pygame.image.load("3_rcharge.png")
+                elif rush_count == 2:
+                    self.fcharge_image = pygame.image.load("2_rcharge.png")
+                elif rush_count == 1:
+                    self.fcharge_image = pygame.image.load("1_rcharge.png")
+                else:
+                    self.fcharge_image = pygame.image.load("0_rcharge.png")
+
+                self.screen.blit(self.fcharge_image, (50, 50))
+
+
+
             pygame.display.update()
             self.clock.tick(FPS)
 

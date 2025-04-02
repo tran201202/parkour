@@ -53,7 +53,7 @@ class Game:
         self.jumpx2_symbol = pygame.transform.scale(self.jumpx2_symbol, (12, 10))
         self.dash_symbol = pygame.image.load('dash_symbol.png')
         self.dash_symbol = pygame.transform.scale(self.dash_symbol, (12, 10))
-        self.all_rect = {'rect1': [200, 700, 200, 50], 'rect2': [550, 700, 400, 50]}
+        self.all_rect = {'rect1': [300, 700, 200, 50], 'rect2': [650, 700, 400, 50], 'rect3': [1200, 600, 200, 300], 'rect4': [1700, 700, 500, 50]}
         
         for k, v in self.all_rect.items():
             a = k + "_image"
@@ -64,7 +64,7 @@ class Game:
 
 
         # Character properties
-        char_x, char_y = 50, 600  
+        char_x, char_y = 400, 600  
         char_velocity_x = 0
         char_velocity_y = 0
         gravity = 1
@@ -142,6 +142,8 @@ class Game:
             char_velocity_y += gravity
 
             
+            if char_y > 800:
+                self.gameover()
             char_x -= char_velocity_x
             for k, v in self.all_rect.items():
                 v[0] -= char_velocity_x
@@ -207,6 +209,26 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(FPS)
+
+    def gameover(self):
+        self.background_image = pygame.image.load('gameover.png')
+        self.retry_image = pygame.image.load('retry.png')
+        self.retry_image = pygame.transform.scale(self.retry_image, (250, 150))
+        self.retry_rect = self.retry_image.get_rect(topleft = (300, 600))
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.retry_rect.collidepoint(event.pos):
+                        self.Start_screen()
+            self.screen.blit(self.background_image, (0, 0))
+            self.screen.blit(self.retry_image, self.retry_rect)
+            pygame.display.update()
+            self.clock.tick(60)
+
+            
 
 
     def tutorial_screen(self):

@@ -53,7 +53,7 @@ class Game:
         self.jumpx2_symbol = pygame.transform.scale(self.jumpx2_symbol, (12, 10))
         self.dash_symbol = pygame.image.load('dash_symbol.png')
         self.dash_symbol = pygame.transform.scale(self.dash_symbol, (12, 10))
-        self.all_rect = {'rect1': [300, 700, 200, 50], 'rect2': [650, 700, 400, 50], 'rect3': [1200, 600, 200, 300], 'rect4': [1700, 700, 500, 50]}
+        self.all_rect = {'rect1': [300, 700, 200, 50], 'rect2': [650, 700, 400, 50], 'rect3': [1200, 600, 200, 300], 'rect4': [1700, 700, 500, 50], 'rect5': [2250, 675, 150, 60], 'rect6': [2450, 650, 150, 70]}
         
         for k, v in self.all_rect.items():
             a = k + "_image"

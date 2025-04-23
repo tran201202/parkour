@@ -43,6 +43,11 @@ class Game:
         self.r_recharge = pygame.image.load("rush_recharge.png")
         self.r_recharge = pygame.transform.scale(self.r_recharge, (200, 200))  
         
+
+        self.done_image = pygame.image.load("endscreen.png")
+        self.done_image = pygame.transform.scale(self.done_image, (200, 100))
+        self.endit_image = pygame.image.load("finish.png")
+        self.endit_image = pygame.transform.scale(self.endit_image, (100, 200))
         self.floor_image = pygame.image.load("Floor.png")
         self.floor_image = pygame.transform.scale(self.floor_image, (200, 50))  
         self.left = pygame.image.load('HandL.png')
@@ -53,7 +58,7 @@ class Game:
         self.jumpx2_symbol = pygame.transform.scale(self.jumpx2_symbol, (12, 10))
         self.dash_symbol = pygame.image.load('dash_symbol.png')
         self.dash_symbol = pygame.transform.scale(self.dash_symbol, (12, 10))
-        self.all_rect = {'rect1': [300, 700, 200, 50], 'rect2': [650, 700, 400, 50], 'rect3': [1200, 600, 200, 300], 'rect4': [1700, 700, 500, 50], 'rect5': [2250, 675, 150, 60], 'rect6': [2450, 650, 150, 70]}
+        self.all_rect = {'rect1': [300, 700, 200, 50], 'rect2': [650, 700, 400, 50], 'rect3': [1200, 600, 200, 300], 'rect4': [1700, 700, 500, 50], 'rect5': [2250, 675, 150, 60], 'rect6': [2450, 650, 150, 70], 'rect6': [2450, 650, 150, 70], 'rect6': [2450, 650, 150, 70], 'rect6': [2450, 600, 150, 70], 'rect7': [2650, 550, 150, 70], 'rect8': [2850, 500, 150, 70], 'rect9': [3050, 450, 150, 70], 'rect10': [3250, 400, 150, 70]}
         
         for k, v in self.all_rect.items():
             a = k + "_image"
@@ -64,7 +69,8 @@ class Game:
 
 
         # Character properties
-        char_x, char_y = 400, 600  
+        char_x, char_y = 400, 600 
+        end_x, end_y = 3550, 500 
         char_velocity_x = 0
         char_velocity_y = 0
         gravity = 1
@@ -158,6 +164,8 @@ class Game:
 
 
             char_y += char_velocity_y
+            end_x -= char_velocity_x
+            
 
             on_floor = False
             
@@ -188,7 +196,8 @@ class Game:
             self.screen.blit(self.left, (char_x-15, char_y+20))
             self.screen.blit(self.right, (char_x+27.5, char_y+20))
             self.screen.blit(self.jumpx2_symbol, (char_x-15, char_y+20))
-            self.screen.blit(self.dash_symbol, (char_x+27.5, char_y+20))     
+            self.screen.blit(self.dash_symbol, (char_x+27.5, char_y+20))   
+            self.screen.blit(self.endit_image, (end_x, end_y))  
             if rushed == True:
                 if rush_count == 5:
                     self.fcharge_image = pygame.image.load("5_rcharge.png")
@@ -205,10 +214,44 @@ class Game:
 
                 self.screen.blit(self.fcharge_image, (50, 50))
 
-
+            if self.win(char_x, char_y, end_x, end_y):
+                self.game_win()
 
             pygame.display.update()
             self.clock.tick(FPS)
+
+    def game_win(self):
+        self.background_image = pygame.image.load('endscreen.png')
+        self.background_image = pygame.transform.scale(self.background_image, (800, 800))
+        self.retry_image = pygame.image.load('retry.png')
+        self.retry_image = pygame.transform.scale(self.retry_image, (250, 150))
+        self.retry_rect = self.retry_image.get_rect(topleft = (300, 600))
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.retry_rect.collidepoint(event.pos):
+                        self.Start_screen()
+            self.screen.blit(self.background_image, (0, 0))
+            self.screen.blit(self.retry_image, self.retry_rect)
+            pygame.display.update()
+            self.clock.tick(60)
+
+    def win(self, char_x, char_y, end_x, end_y):
+        win = False
+        if end_x <= char_x <= end_x + 100 or \
+            end_x + 100 >= char_x + 25 >= end_x:
+            if end_y <= char_y <= end_y + 200 or \
+            end_y + 200 >= char_y >= end_y:
+                win = True
+        return win
+
+
+
+
+
 
     def gameover(self):
         self.background_image = pygame.image.load('gameover.png')
